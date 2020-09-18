@@ -7,21 +7,11 @@ const newMsg = [];
 
 const url = "http://localhost:3000/chat/api/messages";
 
-const start = async () => {
-  const json = await axios.get(url);
-  messages = [];
-  for (i in json.data) {
-    messages.push(json.data[i].message);
-  }
-};
-
 const wsConnection = (server) => {
   const wss = new WebSocket.Server({ server });
 
   wss.on("connection", (ws) => {
     clients.push(ws);
-
-    start();
 
     sendMessages();
 
@@ -30,22 +20,18 @@ const wsConnection = (server) => {
       newMsg.push(msg);
       sendMessages();
     });
-
-    ws.on("close", () => {
-      newMsg.map((msg) => {
-        axios.post(url, {
-          message: msg,
-          author: "Unitato",
-          ts: Date.now(),
-        });
-      });
-    });
   });
 
   const sendMessages = () => {
     clients.forEach(async (client) => {
+      const json = await axios.get(url);
+      messages = [];
+      for (i in json.data) {
+        messages.push(json.data[i].message);
+      }
       console.log(messages, newMsg);
-      messages.concat(newMsg);
+      messages = messages.concat(newMsg);
+      console.log(messages);
       client.send(JSON.stringify(messages));
     });
   };
