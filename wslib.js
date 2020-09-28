@@ -1,5 +1,6 @@
 const WebSocket = require("ws");
 const axios = require("axios");
+const { date } = require("joi");
 
 const clients = [];
 var messages = [];
@@ -16,7 +17,6 @@ const wsConnection = (server) => {
     sendMessages();
 
     ws.on("message", (msg) => {
-      console.log(msg);
       newMsg.push(msg);
       sendMessages();
     });
@@ -29,9 +29,7 @@ const wsConnection = (server) => {
       for (i in json.data) {
         messages.push(json.data[i].message);
       }
-      console.log(messages, newMsg);
       messages = messages.concat(newMsg);
-      console.log(messages);
       client.send(JSON.stringify(messages));
     });
   };

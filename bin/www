@@ -1,7 +1,7 @@
 #!/usr/bin/nodejs
 
-var debug = require("debug")("my-application");
-var app = require("../app");
+const debug = require("debug")("my-application");
+const app = require("../app");
 const ws = require("../wslib");
 
 app.set("port", process.env.PORT || 3000);

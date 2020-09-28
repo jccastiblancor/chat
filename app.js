@@ -1,12 +1,12 @@
-var express = require("express");
-var path = require("path");
-var favicon = require("static-favicon");
-var logger = require("morgan");
-var cookieParser = require("cookie-parser");
-var bodyParser = require("body-parser");
+const express = require("express");
+const path = require("path");
+const favicon = require("static-favicon");
+const logger = require("morgan");
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 const fs = require("fs");
 
-var routes = require("./routes/index");
+const routes = require("./routes/index");
 const users = require("./routes/users");
 const messages = require("./routes/msg");
 
