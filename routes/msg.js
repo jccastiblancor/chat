@@ -1,5 +1,5 @@
 const messageSchema = require("../schemas/message");
-const Message = require("../models/message");
+const Msg = require("../schemas/msg");
 
 module.exports = (app) => {
   const validateMessage = (req, res, next) => {
@@ -17,54 +17,67 @@ module.exports = (app) => {
   };
 
   // GET
+
   app.get("/chat/api/messages", (req, res) => {
-    Message.findAll().then((result) => {
-      res.send(result);
+    Msg.find({}).then((data) => {
+      res.send(data);
     });
   });
 
   // GET detail
   app.get("/chat/api/messages/:ts", (req, res) => {
-    Message.findByPk(req.params.ts).then((response) => {
-      if (response === null) {
-        return res.status(404).send("No se encontró el mensaje con el ts dado");
+    Msg.findOne({ ts: req.params.ts }).then((doc) => {
+      if (doc) {
+        res.send(doc);
+      } else {
+        res.send("no data exist for this ts");
       }
-      res.send(response);
     });
   });
 
   // CREATE
   app.post("/chat/api/messages", validateMessage, (req, res) => {
-    Message.create({
+    let newMsg = new Msg({
       message: req.body.message,
       author: req.body.author,
       ts: req.body.ts,
-    }).then((response) => {
-      res.send(response);
+    });
+    newMsg.save().then((data) => {
+      res.send(data);
     });
   });
 
   // UPDATE
   app.put("/chat/api/messages/:ts", validateMessage, (req, res) => {
-    Message.update(req.body, {
-      where: { ts: req.params.ts },
-    }).then((response) => {
-      if (response === null) {
-        return res.status(404).send("No se encontró el mensaje con el ts dado");
+    Msg.update(
+      { ts: req.params.ts },
+      {
+        $set: {
+          message: req.body.message,
+          author: req.body.author,
+        },
+      },
+      {
+        multi: true,
+        new: true,
       }
-      res.send(response);
+    ).then((doc) => {
+      if (doc) {
+        res.send(doc);
+      } else {
+        res.send("no data exist for this ts");
+      }
     });
   });
 
   // DELETE
   app.delete("/chat/api/messages/:ts", (req, res) => {
-    Message.destroy({
-      where: { ts: req.params.ts },
-    }).then((response) => {
-      if (response === null) {
-        return res.status(404).send("No se encontró el mensaje con el ts dado");
+    Msg.remove({ ts: req.params.ts }).then((doc) => {
+      if (doc) {
+        res.send(doc);
+      } else {
+        res.send("no data exist for this ts");
       }
-      res.send("Deleted");
     });
   });
 };

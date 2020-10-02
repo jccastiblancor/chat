@@ -1,14 +1,17 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const path = require("path");
 const favicon = require("static-favicon");
 const logger = require("morgan");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
-const fs = require("fs");
 
 const routes = require("./routes/index");
-const users = require("./routes/users");
 const messages = require("./routes/msg");
+
+mongoose.connect(
+  "mongodb+srv://jccastiblancor:ARGcuhZEp9eyyYFb@cluster0.issla.mongodb.net/chatbd?retryWrites=true&w=majority"
+);
 
 var app = express();
 
@@ -24,7 +27,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", routes);
-users(app);
 messages(app);
 
 /// catch 404 and forwarding to error handler
